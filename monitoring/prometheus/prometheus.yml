@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 1s
+
+scrape_configs:
+  - job_name: 'disaster_alert_system'
+    static_configs:
+      # use 'host.docker.internal' if running Flask on local Windows/Mac and Prometheus in Docker
+      - targets: ['host.docker.internal:5000']

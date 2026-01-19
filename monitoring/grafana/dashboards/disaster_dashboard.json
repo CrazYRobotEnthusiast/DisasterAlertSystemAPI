@@ -1,0 +1,75 @@
+{
+  "editable": true,
+  "panels": [
+    {
+      "title": "Current Queue Backlog",
+      "type": "gauge",
+      "gridPos": { "h": 7, "w": 6, "x": 0, "y": 0 },
+      "fieldConfig": {
+        "defaults": { "min": 0, "max": 20, "noValue": "0", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 10 }] } }
+      },
+      "targets": [{ "expr": "disaster_queue_depth", "legendFormat": "Tasks" }]
+    },
+    {
+  "title": "Admin Login Activity",
+  "type": "piechart",
+  "gridPos": { "h": 7, "w": 6, "x": 6, "y": 0 },
+  "targets": [
+    {
+      "expr": "sum(disaster_login_attempts_total) by (status)",
+      "legendFormat": "{{status}}",
+      "instant": true
+    }
+  ],
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": ["lastNotNull"],
+      "fields": ""
+    },
+    "displayLabels": ["name", "value"],
+    "legend": {
+      "displayMode": "list",
+      "placement": "bottom",
+      "values": ["value"]
+    }
+  }
+},
+    {
+      "title": "Twilio Success Rate",
+      "type": "gauge",
+      "gridPos": { "h": 7, "w": 6, "x": 12, "y": 0 },
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0, "max": 100,"noValue": "0", "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 80 }, { "color": "green", "value": 95 }] } }
+      },
+      "targets": [{ "expr": "(sum(disaster_alerts_total{status='success'}) / sum(disaster_alerts_total)) * 100", "legendFormat": "Success %" }]
+    },
+    {
+      "title": "Active System Admins",
+      "type": "stat",
+      "gridPos": { "h": 7, "w": 6, "x": 18, "y": 0 },
+      "fieldConfig": { "defaults": { "noValue": "0" } },
+      "targets": [{ "expr": "disaster_active_admins", "legendFormat": "Active Now" }]
+    },
+    {
+      "title": "End-to-End Latency Trend",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 7 },
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "gradientMode": "area", "fillOpacity": 20 } } },
+      "targets": [{ "expr": "rate(disaster_alert_request_latency_seconds_sum[1m]) / rate(disaster_alert_request_latency_seconds_count[1m])", "legendFormat": "Avg Latency" }]
+    },
+    {
+      "title": "Regional Alert Distribution",
+      "type": "barchart",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 7 },
+      "options": { "xField": "region", "orientation": "horizontal", "showValue": "always" },
+      "targets": [{ "expr": "sum by (region) (disaster_alerts_total)", "legendFormat": "{{region}}", "format": "table", "instant": true }],
+      "transformations": [
+        { "id": "prepareTimeSeries", "options": { "format": "multi" } }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "title": "Disaster System Health - Production",
+  "uid": "disaster_production_v2"
+}
